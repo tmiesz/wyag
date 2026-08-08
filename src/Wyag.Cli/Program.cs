@@ -1,12 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wyag.Core.Commands;
+using Wyag.Core.IO;
 
 var services = new ServiceCollection();
+
+services.AddSingleton<IFileSystem, LocalFileSystem>();
+
+services.AddSingleton<ICommand>(sp => new InitCommand(sp.GetRequiredService<IFileSystem>()));
 
 string[] plannedCommands =
 [
     "add", "cat-file", "check-ignore", "checkout", "commit",
-    "hash-object", "init", "log", "ls-files", "ls-tree",
+    "hash-object", "log", "ls-files", "ls-tree",
     "rev-prase", "rm", "show-ref", "status", "tag"
 ];
 
