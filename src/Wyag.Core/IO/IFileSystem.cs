@@ -12,8 +12,8 @@ public interface IFileSystem
     IEnumerable<string> EnumerateFiles(string path);
     IEnumerable<string> EnumerateDirectories(string path);
 
-    Stream Read(string path);
-    Stream Write(string path);
+    Stream OpenRead(string path);
+    Stream OpenWrite(string path);
 
     string ReadText(string path);
     void WriteText(string path, string content);
