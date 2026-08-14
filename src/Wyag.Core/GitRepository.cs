@@ -23,7 +23,7 @@ public sealed class GitRepository
 
         Config = new GitConfig();
 
-        var configPath = Path();
+        var configPath = Path("config");
         if (_fs.FileExists(configPath))
         {
             using var reader = new StreamReader(_fs.OpenRead(configPath));
