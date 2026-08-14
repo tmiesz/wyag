@@ -21,6 +21,7 @@ public sealed class ObjectStore(IFileSystem fs) : IObjectStore
     private static readonly Dictionary<string, Func<byte[], GitObject>> ObjectConstructors = new()
     {
         ["blob"] = data => new GitBlob(data),
+        ["commit"] = data => new GitCommit(data),
     };
 
     public string Hash(Stream input, string format, GitRepository? repo)
