@@ -1,17 +1,30 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wyag.Core.Commands;
 using Wyag.Core.IO;
+using Wyag.Core.Objects;
 
 var services = new ServiceCollection();
 
 services.AddSingleton<IFileSystem, LocalFileSystem>();
+services.AddSingleton<IObjectStore, ObjectStore>();
+services.AddSingleton<IObjectResolver, PlaceholderObjectResolver>();
 
-services.AddSingleton<ICommand>(sp => new InitCommand(sp.GetRequiredService<IFileSystem>()));
+services.AddSingleton<ICommand>(sp => new InitCommand(
+            sp.GetRequiredService<IFileSystem>()));
+
+services.AddSingleton<ICommand>(sp => new CatFileCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IObjectStore>(),
+            sp.GetRequiredService<IObjectResolver>()));
+
+services.AddSingleton<ICommand>(sp => new HashObjectCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IObjectStore>()));
 
 string[] plannedCommands =
 [
-    "add", "cat-file", "check-ignore", "checkout", "commit",
-    "hash-object", "log", "ls-files", "ls-tree",
+    "add", "check-ignore", "checkout", "commit",
+    "log", "ls-files", "ls-tree",
     "rev-prase", "rm", "show-ref", "status", "tag"
 ];
 

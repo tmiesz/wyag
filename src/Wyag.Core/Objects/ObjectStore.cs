@@ -25,7 +25,15 @@ public sealed class ObjectStore(IFileSystem fs) : IObjectStore
 
     public string Hash(Stream input, string format, GitRepository? repo)
     {
-        throw new NotImplementedException();
+        using var buffer = new MemoryStream();
+        input.CopyTo(buffer);
+        var data = buffer.ToArray();
+
+        if (!ObjectConstructors.TryGetValue(format, out var construct))
+            throw new GitException($"Unknown type {format}");
+
+        var obj = construct(data);
+        return Write(obj, repo);
     }
 
     public GitObject Read(GitRepository repo, string sha)
