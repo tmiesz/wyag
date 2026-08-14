@@ -21,10 +21,15 @@ services.AddSingleton<ICommand>(sp => new HashObjectCommand(
             sp.GetRequiredService<IFileSystem>(),
             sp.GetRequiredService<IObjectStore>()));
 
+services.AddSingleton<ICommand>(sp => new LogCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IObjectStore>(),
+            sp.GetRequiredService<IObjectResolver>()));
+
 string[] plannedCommands =
 [
     "add", "check-ignore", "checkout", "commit",
-    "log", "ls-files", "ls-tree",
+    "ls-files", "ls-tree",
     "rev-prase", "rm", "show-ref", "status", "tag"
 ];
 
