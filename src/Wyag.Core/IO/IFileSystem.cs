@@ -23,5 +23,6 @@ public interface IFileSystem
 
     string Combine(params string[] paths);
     string GetFullPath(string path);
+    string? GetFileName(string path);
     string? GetDirectoryName(string path);
 }

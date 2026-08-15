@@ -16,6 +16,8 @@ public sealed class LocalFileSystem : IFileSystem
 
     public string? GetDirectoryName(string path) => Path.GetDirectoryName(path);
 
+    public string GetFileName(string path) => Path.GetFileName(path);
+
     public string GetFullPath(string path) => Path.GetFullPath(path);
 
     public Stream OpenRead(string path) => File.OpenRead(path);
