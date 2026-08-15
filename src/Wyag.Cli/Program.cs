@@ -2,12 +2,14 @@
 using Wyag.Core.Commands;
 using Wyag.Core.IO;
 using Wyag.Core.Objects;
+using Wyag.Core.Refs;
 
 var services = new ServiceCollection();
 
 services.AddSingleton<IFileSystem, LocalFileSystem>();
 services.AddSingleton<IObjectStore, ObjectStore>();
 services.AddSingleton<IObjectResolver, PlaceholderObjectResolver>();
+services.AddSingleton<IRefStore, RefStore>();
 
 services.AddSingleton<ICommand>(sp => new InitCommand(
             sp.GetRequiredService<IFileSystem>()));
@@ -36,11 +38,15 @@ services.AddSingleton<ICommand>(sp => new CheckoutCommand(
             sp.GetRequiredService<IObjectStore>(),
             sp.GetRequiredService<IObjectResolver>()));
 
+services.AddSingleton<ICommand>(sp => new ShowRefCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IRefStore>()));
+
 string[] plannedCommands =
 [
     "add", "check-ignore", "commit",
     "ls-files",
-    "rev-prase", "rm", "show-ref", "status", "tag"
+    "rev-prase", "rm", "status", "tag"
 ];
 
 foreach (var name in plannedCommands)
