@@ -22,6 +22,7 @@ public sealed class ObjectStore(IFileSystem fs) : IObjectStore
     {
         ["blob"] = data => new GitBlob(data),
         ["commit"] = data => new GitCommit(data),
+        ["tree"] = data => new GitTree(data),
     };
 
     public string Hash(Stream input, string format, GitRepository? repo)
@@ -50,7 +51,7 @@ public sealed class ObjectStore(IFileSystem fs) : IObjectStore
         var format = Encoding.ASCII.GetString(raw, 0, spaceIndex);
 
         var nullIndex = Array.IndexOf(raw, (byte)0, spaceIndex);
-        var sizeText = Encoding.ASCII.GetString(raw, spaceIndex + 1, nullIndex - spaceIndex);
+        var sizeText = Encoding.ASCII.GetString(raw, spaceIndex + 1, nullIndex - spaceIndex - 1);
         var declaredSize = int.Parse(sizeText);
         var actualSize = raw.Length - nullIndex - 1;
 
