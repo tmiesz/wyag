@@ -26,10 +26,15 @@ services.AddSingleton<ICommand>(sp => new LogCommand(
             sp.GetRequiredService<IObjectStore>(),
             sp.GetRequiredService<IObjectResolver>()));
 
+services.AddSingleton<ICommand>(sp => new LsTreeCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IObjectStore>(),
+            sp.GetRequiredService<IObjectResolver>()));
+
 string[] plannedCommands =
 [
     "add", "check-ignore", "checkout", "commit",
-    "ls-files", "ls-tree",
+    "ls-files",
     "rev-prase", "rm", "show-ref", "status", "tag"
 ];
 
