@@ -48,11 +48,15 @@ services.AddSingleton<ICommand>(sp => new TagCommand(
             sp.GetRequiredService<IRefStore>(),
             sp.GetRequiredService<ITagService>()));
 
+services.AddSingleton<ICommand>(sp => new RevParseCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IObjectResolver>()));
+
 string[] plannedCommands =
 [
     "add", "check-ignore", "commit",
     "ls-files",
-    "rev-prase", "rm", "status"
+    "rm", "status"
 ];
 
 foreach (var name in plannedCommands)
