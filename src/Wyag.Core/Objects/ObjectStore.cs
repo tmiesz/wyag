@@ -23,6 +23,7 @@ public sealed class ObjectStore(IFileSystem fs) : IObjectStore
         ["blob"] = data => new GitBlob(data),
         ["commit"] = data => new GitCommit(data),
         ["tree"] = data => new GitTree(data),
+        ["tag"] = data => new GitTag(data),
     };
 
     public string Hash(Stream input, string format, GitRepository? repo)
