@@ -8,8 +8,9 @@ var services = new ServiceCollection();
 
 services.AddSingleton<IFileSystem, LocalFileSystem>();
 services.AddSingleton<IObjectStore, ObjectStore>();
-services.AddSingleton<IObjectResolver, PlaceholderObjectResolver>();
+services.AddSingleton<IObjectResolver, GitObjectResolver>();
 services.AddSingleton<IRefStore, RefStore>();
+services.AddSingleton<ITagService, TagService>();
 
 services.AddSingleton<ICommand>(sp => new InitCommand(
             sp.GetRequiredService<IFileSystem>()));
@@ -42,11 +43,16 @@ services.AddSingleton<ICommand>(sp => new ShowRefCommand(
             sp.GetRequiredService<IFileSystem>(),
             sp.GetRequiredService<IRefStore>()));
 
+services.AddSingleton<ICommand>(sp => new TagCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IRefStore>(),
+            sp.GetRequiredService<ITagService>()));
+
 string[] plannedCommands =
 [
     "add", "check-ignore", "commit",
     "ls-files",
-    "rev-prase", "rm", "status", "tag"
+    "rev-prase", "rm", "status"
 ];
 
 foreach (var name in plannedCommands)
