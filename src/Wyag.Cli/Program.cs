@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wyag.Core.Commands;
+using Wyag.Core.Ignore;
+using Wyag.Core.Index;
 using Wyag.Core.IO;
 using Wyag.Core.Objects;
 using Wyag.Core.Refs;
+using Wyag.Core.Status;
 
 var services = new ServiceCollection();
 
@@ -11,6 +14,10 @@ services.AddSingleton<IObjectStore, ObjectStore>();
 services.AddSingleton<IObjectResolver, GitObjectResolver>();
 services.AddSingleton<IRefStore, RefStore>();
 services.AddSingleton<ITagService, TagService>();
+services.AddSingleton<IIndexStore, IndexStore>();
+services.AddSingleton<IGitIgnoreService, GitIgnoreService>();
+services.AddSingleton<IBranchService, BranchService>();
+services.AddSingleton<IRepositoryStatusService, RepositoryStatusService>();
 
 services.AddSingleton<ICommand>(sp => new InitCommand(
             sp.GetRequiredService<IFileSystem>()));
@@ -52,11 +59,22 @@ services.AddSingleton<ICommand>(sp => new RevParseCommand(
             sp.GetRequiredService<IFileSystem>(),
             sp.GetRequiredService<IObjectResolver>()));
 
+services.AddSingleton<ICommand>(sp => new LsFilesCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IIndexStore>()));
+
+services.AddSingleton<ICommand>(sp => new CheckIgnoreCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IGitIgnoreService>()));
+
+services.AddSingleton<ICommand>(sp => new StatusCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IRepositoryStatusService>()));
+
 string[] plannedCommands =
 [
-    "add", "check-ignore", "commit",
-    "ls-files",
-    "rm", "status"
+    "add", "commit",
+    "rm",
 ];
 
 foreach (var name in plannedCommands)
