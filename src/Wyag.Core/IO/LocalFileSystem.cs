@@ -6,6 +6,8 @@ public sealed class LocalFileSystem : IFileSystem
 
     public void CreateDirectory(string path) => Directory.CreateDirectory(path);
 
+    public void DeleteFile(string path) => File.Delete(path);
+
     public bool DirectoryExists(string path) => Directory.Exists(path);
 
     public IEnumerable<string> EnumerateDirectories(string path) => Directory.EnumerateDirectories(path);
@@ -16,9 +18,17 @@ public sealed class LocalFileSystem : IFileSystem
 
     public string? GetDirectoryName(string path) => Path.GetDirectoryName(path);
 
+    public FileStat GetFileInfo(string path)
+    {
+        var info = new FileInfo(path);
+        return new FileStat(info.Length, info.CreationTimeUtc, info.LastWriteTimeUtc);
+    }
+
     public string GetFileName(string path) => Path.GetFileName(path);
 
     public string GetFullPath(string path) => Path.GetFullPath(path);
+
+    public string GetRelativePath(string relativeTo, string path) => Path.GetRelativePath(relativeTo, path);
 
     public Stream OpenRead(string path) => File.OpenRead(path);
 

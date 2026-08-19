@@ -25,4 +25,10 @@ public interface IFileSystem
     string GetFullPath(string path);
     string? GetFileName(string path);
     string? GetDirectoryName(string path);
+
+    void DeleteFile(string path);
+    FileStat GetFileInfo(string path);
+    string GetRelativePath(string relativeTo, string path);
 }
+
+public readonly record struct FileStat(long Size, DateTimeOffset CreationTime, DateTimeOffset LastWriteTime);
