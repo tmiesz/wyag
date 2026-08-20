@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace Wyag.Core.Objects;
 
 public sealed class GitTreeSerializer
@@ -22,5 +20,5 @@ public sealed class GitTreeSerializer
     }
 
     private static string SortKey(GitTreeLeaf leaf) =>
-        leaf.Mode.StartsWith('4') ? leaf.Path + "/" : leaf.Path;
+        leaf.Mode == "040000" ? leaf.Path + "/" : leaf.Path;
 }
