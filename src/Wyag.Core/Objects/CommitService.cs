@@ -31,7 +31,7 @@ public sealed class CommitService(
         var timestamp = GitTimestamp.Format(DateTimeOffset.Now);
 
         commit.Kvlm.Add("author", $"{identity} {timestamp}");
-        commit.Kvlm.Add("commiter", $"{identity} {timestamp}");
+        commit.Kvlm.Add("committer", $"{identity} {timestamp}");
         commit.Kvlm.Message = message.EndsWith('\n') ? message : message + "\n";
 
         var commitSha = os.Write(commit, repo);
