@@ -96,7 +96,7 @@ public sealed class GitRepository
             ?? throw new GitException("Could not create .git/objects");
         _ = repo.Dir(mkdir: true, "refs", "tags")
             ?? throw new GitException("Could not create .git/refs/tags");
-        _ = repo.Dir(mkdir: true, "refs", "tags")
+        _ = repo.Dir(mkdir: true, "refs", "heads")
             ?? throw new GitException("Could not create .git/refs/heads");
 
         // .git/description
