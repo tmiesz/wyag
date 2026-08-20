@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wyag.Core.Commands;
+using Wyag.Core.Exceptions;
 using Wyag.Core.Ignore;
 using Wyag.Core.Index;
 using Wyag.Core.IO;
@@ -18,6 +19,10 @@ services.AddSingleton<IIndexStore, IndexStore>();
 services.AddSingleton<IGitIgnoreService, GitIgnoreService>();
 services.AddSingleton<IBranchService, BranchService>();
 services.AddSingleton<IRepositoryStatusService, RepositoryStatusService>();
+services.AddSingleton<IStagingService, StagingService>();
+services.AddSingleton<ITreeBuilder, TreeBuilder>();
+services.AddSingleton<IAuthorIdentityProvider, AuthorIdentityProvider>();
+services.AddSingleton<ICommitService, CommitService>();
 
 services.AddSingleton<ICommand>(sp => new InitCommand(
             sp.GetRequiredService<IFileSystem>()));
@@ -71,16 +76,17 @@ services.AddSingleton<ICommand>(sp => new StatusCommand(
             sp.GetRequiredService<IFileSystem>(),
             sp.GetRequiredService<IRepositoryStatusService>()));
 
-string[] plannedCommands =
-[
-    "add", "commit",
-    "rm",
-];
+services.AddSingleton<ICommand>(sp => new RmCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IStagingService>()));
 
-foreach (var name in plannedCommands)
-{
-    services.AddSingleton<ICommand>(new NotYetImplemented(name));
-}
+services.AddSingleton<ICommand>(sp => new AddCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<IStagingService>()));
+
+services.AddSingleton<ICommand>(sp => new CommitCommand(
+            sp.GetRequiredService<IFileSystem>(),
+            sp.GetRequiredService<ICommitService>()));
 
 await using var provider = services.BuildServiceProvider();
 
@@ -101,5 +107,12 @@ if (!commands.TryGetValue(commandName, out var command))
     Console.Error.WriteLine($"wyag: '{commandName}' is not a wyag command.");
     return 1;
 }
-
-return await command.ExecuteAsync(rest, CancellationToken.None);
+try
+{
+    return await command.ExecuteAsync(rest, CancellationToken.None);
+}
+catch (GitException ex)
+{
+    Console.Error.WriteLine($"wyag: {ex.Message}");
+    return 1;
+}
